@@ -1,15 +1,17 @@
 package rates
 
-// Rates contains the rate object
-type Rates struct {
-	Rate Rate   `json:"rates"`
-	Base string `json:"base"`
-	Date string `json:"date"`
+// BasedRates contains the rates of a specific base currency
+type BasedRates struct {
+	Rates map[string]float32 `json:"rates"`
+	Base  string             `json:"base"`
+	Date  string             `json:"date"`
 }
 
-// Rate represent a single rate object
-// it contains USD-EUR and GBP-EUR exchange rates
-type Rate struct {
-	GBP float32 `json:"GBP"`
-	UDS float32 `json:"USD"`
+// HistoricalRates contains the historical rates of
+// a specific base currency
+type HistoricalRates struct {
+	Rates   map[string]map[string]interface{} `json:"rates"`
+	Base    string                            `json:"base"`
+	StartAt string                            `json:"start_at"`
+	EndAt   string                            `json:"end_at"`
 }
