@@ -1,9 +1,7 @@
 package service_test
 
 import (
-	"net/http"
 	"testing"
-	"time"
 
 	"github.com/stretchr/testify/assert"
 
@@ -15,17 +13,7 @@ const (
 )
 
 func TestService_DailyRates(t *testing.T) {
-	t.Run("should take rates successfully", func(t *testing.T) {
-		c := &http.Client{
-			Timeout: time.Duration(reqTimeoutSecs * time.Second),
-		}
-		s := service.New(c)
-		assert.NotNil(t, s)
-
-		r, err := s.DailyRates("EUR")
-		assert.NoError(t, err)
-		assert.NotNil(t, r)
-	})
+	// TODO
 }
 
 func TestNew(t *testing.T) {

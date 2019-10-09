@@ -3,9 +3,9 @@ package service
 import (
 	"encoding/json"
 	"io/ioutil"
-	"net/http"
 	"strings"
 
+	internal_http "github.com/ferruvich/go-exchange-rates-api/internal/transport/http/service"
 	"github.com/ferruvich/go-exchange-rates-api/internal/rates"
 	"github.com/pkg/errors"
 )
@@ -31,7 +31,7 @@ type Servicer interface {
 
 // Service is the Servicer implementation
 type Service struct {
-	client  *http.Client
+	httpSvc internal_http.Servicer
 	baseURL string
 }
 
@@ -42,22 +42,21 @@ func (s *Service) DailyRates(base string) (*rates.BasedRates, error) {
 		return nil, errors.Wrap(ErrInvalidParam, "base")
 	}
 
-	req, err := http.NewRequest(
+	req, err := s.httpSvc.NewRequest(
 		"GET",
 		strings.Join([]string{
 			s.baseURL, "latest",
 		}, "/"),
 		nil,
+		map[string]string{
+			"base": base,
+		},
 	)
 	if err != nil {
 		return nil, errors.Wrap(ErrRequest, err.Error())
 	}
 
-	q := req.URL.Query()
-	q.Add("base", base)
-	req.URL.RawQuery = q.Encode()
-
-	resp, err := s.client.Do(req)
+	resp, err := s.httpSvc.Do(req)
 	if err != nil {
 		return nil, errors.Wrap(ErrRequest, err.Error())
 	}
@@ -79,9 +78,9 @@ func (s *Service) DailyRates(base string) (*rates.BasedRates, error) {
 }
 
 // New initializes a new rates service
-func New(c *http.Client) *Service {
+func New(c internal_http.Servicer) *Service {
 	return &Service{
-		client:  c,
+		httpSvc: c,
 		baseURL: "https://api.exchangeratesapi.io",
 	}
 }
