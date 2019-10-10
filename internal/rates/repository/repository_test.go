@@ -47,7 +47,7 @@ func TestRepository_CurrentRates(t *testing.T) {
 
 		mockHttpService := service_mock.NewMockServicer(controller)
 		mockHttpService.EXPECT().NewRequest(
-			method, gomock.Any(), nil, map[string]string{"base": base},
+			method, gomock.Any(), nil, map[string]interface{}{"base": base},
 		).Return(nil, errors.New("error"))
 
 		repo := repository.New(mockHttpService)
@@ -63,7 +63,7 @@ func TestRepository_CurrentRates(t *testing.T) {
 
 		mockHttpService := service_mock.NewMockServicer(controller)
 		mockHttpService.EXPECT().NewRequest(
-			method, gomock.Any(), nil, map[string]string{"base": base},
+			method, gomock.Any(), nil, map[string]interface{}{"base": base},
 		).Return(new(http.Request), nil)
 		mockHttpService.EXPECT().Do(new(http.Request)).Return(nil, errors.New("error"))
 
@@ -80,7 +80,7 @@ func TestRepository_CurrentRates(t *testing.T) {
 
 		mockHttpService := service_mock.NewMockServicer(controller)
 		mockHttpService.EXPECT().NewRequest(
-			method, gomock.Any(), nil, map[string]string{"base": base},
+			method, gomock.Any(), nil, map[string]interface{}{"base": base},
 		).Return(new(http.Request), nil)
 		mockHttpService.EXPECT().Do(new(http.Request)).Return(&http.Response{
 			Body: ioutil.NopCloser(new(errorReader)),
@@ -99,7 +99,7 @@ func TestRepository_CurrentRates(t *testing.T) {
 
 		mockHttpService := service_mock.NewMockServicer(controller)
 		mockHttpService.EXPECT().NewRequest(
-			method, gomock.Any(), nil, map[string]string{"base": base},
+			method, gomock.Any(), nil, map[string]interface{}{"base": base},
 		).Return(new(http.Request), nil)
 		mockHttpService.EXPECT().Do(new(http.Request)).Return(&http.Response{
 			Body: ioutil.NopCloser(bytes.NewReader([]byte(""))),
@@ -121,7 +121,7 @@ func TestRepository_CurrentRates(t *testing.T) {
 
 		mockHttpService := service_mock.NewMockServicer(controller)
 		mockHttpService.EXPECT().NewRequest(
-			method, gomock.Any(), nil, map[string]string{"base": base},
+			method, gomock.Any(), nil, map[string]interface{}{"base": base},
 		).Return(new(http.Request), nil)
 		mockHttpService.EXPECT().Do(new(http.Request)).Return(&http.Response{
 			Body: ioutil.NopCloser(bytes.NewReader(rb)),
@@ -175,7 +175,7 @@ func TestRepository_HistoricalRates(t *testing.T) {
 		mockHttpService := service_mock.NewMockServicer(controller)
 		mockHttpService.EXPECT().NewRequest(
 			method, gomock.Any(), nil,
-			map[string]string{
+			map[string]interface{}{
 				"base":     base,
 				"start_at": startDate,
 				"end_at":   endDate,
@@ -196,7 +196,7 @@ func TestRepository_HistoricalRates(t *testing.T) {
 		mockHttpService := service_mock.NewMockServicer(controller)
 		mockHttpService.EXPECT().NewRequest(
 			method, gomock.Any(), nil,
-			map[string]string{
+			map[string]interface{}{
 				"base":     base,
 				"start_at": startDate,
 				"end_at":   endDate,
@@ -218,7 +218,7 @@ func TestRepository_HistoricalRates(t *testing.T) {
 		mockHttpService := service_mock.NewMockServicer(controller)
 		mockHttpService.EXPECT().NewRequest(
 			method, gomock.Any(), nil,
-			map[string]string{
+			map[string]interface{}{
 				"base":     base,
 				"start_at": startDate,
 				"end_at":   endDate,
@@ -242,7 +242,7 @@ func TestRepository_HistoricalRates(t *testing.T) {
 		mockHttpService := service_mock.NewMockServicer(controller)
 		mockHttpService.EXPECT().NewRequest(
 			method, gomock.Any(), nil,
-			map[string]string{
+			map[string]interface{}{
 				"base":     base,
 				"start_at": startDate,
 				"end_at":   endDate,
@@ -269,7 +269,7 @@ func TestRepository_HistoricalRates(t *testing.T) {
 		mockHttpService := service_mock.NewMockServicer(controller)
 		mockHttpService.EXPECT().NewRequest(
 			method, gomock.Any(), nil,
-			map[string]string{
+			map[string]interface{}{
 				"base":     base,
 				"start_at": startDate,
 				"end_at":   endDate,
@@ -289,15 +289,15 @@ func TestRepository_HistoricalRates(t *testing.T) {
 
 func TestRepository_SpecificRates(t *testing.T) {
 	const (
-		method   = "GET"
-		url      = "someURL"
-		base     = "EUR"
-		currency = "GBP"
+		method = "GET"
+		url    = "someURL"
+		base   = "EUR"
 	)
+	currencies := []string{"GBP"}
 
 	t.Run("should return error due to invalid base param", func(t *testing.T) {
 		repo := repository.New(nil)
-		res, err := repo.SpecificRates("", "")
+		res, err := repo.SpecificRates("", []string{})
 		assert.Error(t, err)
 		assert.Nil(t, res)
 		assert.Equal(t, repository.ErrInvalidParam, errors.Cause(err))
@@ -305,7 +305,7 @@ func TestRepository_SpecificRates(t *testing.T) {
 
 	t.Run("should return error due to invalid currency param", func(t *testing.T) {
 		repo := repository.New(nil)
-		res, err := repo.SpecificRates(base, "")
+		res, err := repo.SpecificRates(base, []string{})
 		assert.Error(t, err)
 		assert.Nil(t, res)
 		assert.Equal(t, repository.ErrInvalidParam, errors.Cause(err))
@@ -318,14 +318,14 @@ func TestRepository_SpecificRates(t *testing.T) {
 		mockHttpService := service_mock.NewMockServicer(controller)
 		mockHttpService.EXPECT().NewRequest(
 			method, gomock.Any(), nil,
-			map[string]string{
+			map[string]interface{}{
 				"base":    base,
-				"symbols": currency,
+				"symbols": currencies,
 			},
 		).Return(nil, errors.New("error"))
 
 		repo := repository.New(mockHttpService)
-		res, err := repo.SpecificRates(base, currency)
+		res, err := repo.SpecificRates(base, currencies)
 		assert.Error(t, err)
 		assert.Nil(t, res)
 		assert.Equal(t, repository.ErrRequest, errors.Cause(err))
@@ -338,15 +338,15 @@ func TestRepository_SpecificRates(t *testing.T) {
 		mockHttpService := service_mock.NewMockServicer(controller)
 		mockHttpService.EXPECT().NewRequest(
 			method, gomock.Any(), nil,
-			map[string]string{
+			map[string]interface{}{
 				"base":    base,
-				"symbols": currency,
+				"symbols": currencies,
 			},
 		).Return(new(http.Request), nil)
 		mockHttpService.EXPECT().Do(new(http.Request)).Return(nil, errors.New("error"))
 
 		repo := repository.New(mockHttpService)
-		res, err := repo.SpecificRates(base, currency)
+		res, err := repo.SpecificRates(base, currencies)
 		assert.Error(t, err)
 		assert.Nil(t, res)
 		assert.Equal(t, repository.ErrRequest, errors.Cause(err))
@@ -359,9 +359,9 @@ func TestRepository_SpecificRates(t *testing.T) {
 		mockHttpService := service_mock.NewMockServicer(controller)
 		mockHttpService.EXPECT().NewRequest(
 			method, gomock.Any(), nil,
-			map[string]string{
+			map[string]interface{}{
 				"base":    base,
-				"symbols": currency,
+				"symbols": currencies,
 			},
 		).Return(new(http.Request), nil)
 		mockHttpService.EXPECT().Do(new(http.Request)).Return(&http.Response{
@@ -369,7 +369,7 @@ func TestRepository_SpecificRates(t *testing.T) {
 		}, nil)
 
 		repo := repository.New(mockHttpService)
-		res, err := repo.SpecificRates(base, currency)
+		res, err := repo.SpecificRates(base, currencies)
 		assert.Error(t, err)
 		assert.Nil(t, res)
 		assert.Equal(t, repository.ErrResponse, errors.Cause(err))
@@ -382,9 +382,9 @@ func TestRepository_SpecificRates(t *testing.T) {
 		mockHttpService := service_mock.NewMockServicer(controller)
 		mockHttpService.EXPECT().NewRequest(
 			method, gomock.Any(), nil,
-			map[string]string{
+			map[string]interface{}{
 				"base":    base,
-				"symbols": currency,
+				"symbols": currencies,
 			},
 		).Return(new(http.Request), nil)
 		mockHttpService.EXPECT().Do(new(http.Request)).Return(&http.Response{
@@ -392,7 +392,7 @@ func TestRepository_SpecificRates(t *testing.T) {
 		}, nil)
 
 		repo := repository.New(mockHttpService)
-		res, err := repo.SpecificRates(base, currency)
+		res, err := repo.SpecificRates(base, currencies)
 		assert.Error(t, err)
 		assert.Nil(t, res)
 		assert.Equal(t, repository.ErrResponse, errors.Cause(err))
@@ -408,9 +408,9 @@ func TestRepository_SpecificRates(t *testing.T) {
 		mockHttpService := service_mock.NewMockServicer(controller)
 		mockHttpService.EXPECT().NewRequest(
 			method, gomock.Any(), nil,
-			map[string]string{
+			map[string]interface{}{
 				"base":    base,
-				"symbols": currency,
+				"symbols": currencies,
 			},
 		).Return(new(http.Request), nil)
 		mockHttpService.EXPECT().Do(new(http.Request)).Return(&http.Response{
@@ -418,7 +418,7 @@ func TestRepository_SpecificRates(t *testing.T) {
 		}, nil)
 
 		repo := repository.New(mockHttpService)
-		res, err := repo.SpecificRates(base, currency)
+		res, err := repo.SpecificRates(base, currencies)
 		assert.NoError(t, err)
 		assert.NotNil(t, res)
 		assert.Equal(t, *r, *res)

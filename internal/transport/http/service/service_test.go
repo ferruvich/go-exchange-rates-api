@@ -24,8 +24,20 @@ func TestService_NewRequest(t *testing.T) {
 	t.Run("should return the request", func(t *testing.T) {
 		s := service.New(nil)
 
-		res, err := s.NewRequest("POST", "http://www.foo.com", nil, map[string]string{
-			"some": "value",
+		res, err := s.NewRequest("POST", "http://www.foo.com", nil, map[string]interface{}{
+			"some": 0,
+		})
+		assert.Error(t, err)
+		assert.Nil(t, res)
+		assert.Equal(t, service.ErrInvalidParam, errors.Cause(err))
+	})
+
+	t.Run("should return the request", func(t *testing.T) {
+		s := service.New(nil)
+
+		res, err := s.NewRequest("POST", "http://www.foo.com", nil, map[string]interface{}{
+			"some":    "value",
+			"another": []string{"value", "value"},
 		})
 		assert.NoError(t, err)
 		assert.NotNil(t, res)

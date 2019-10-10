@@ -31,7 +31,7 @@ var (
 type Repositorer interface {
 	CurrentRates(base string) (*rates.BasedRates, error)
 	HistoricalRates(base, start, end string) (*rates.HistoricalRates, error)
-	SpecificRates(base, currency string) (*rates.BasedRates, error)
+	SpecificRates(base string, currencies []string) (*rates.BasedRates, error)
 }
 
 // Repository is the Repositorer implementation
@@ -59,7 +59,7 @@ func (r *Repository) CurrentRates(base string) (*rates.BasedRates, error) {
 			r.baseURL, "latest",
 		}, "/"),
 		nil,
-		map[string]string{
+		map[string]interface{}{
 			"base": base,
 		},
 	)
@@ -106,7 +106,7 @@ func (r *Repository) HistoricalRates(base, start, end string) (*rates.Historical
 			r.baseURL, "history",
 		}, "/"),
 		nil,
-		map[string]string{
+		map[string]interface{}{
 			"base":     base,
 			"start_at": start,
 			"end_at":   end,
@@ -138,12 +138,12 @@ func (r *Repository) HistoricalRates(base, start, end string) (*rates.Historical
 
 // SpecificRates returns the current exchange rate
 // for the given 'base' currency and the specific 'currency'
-func (r *Repository) SpecificRates(base, currency string) (*rates.BasedRates, error) {
+func (r *Repository) SpecificRates(base string, currencies []string) (*rates.BasedRates, error) {
 	if base == "" {
 		return nil, errors.Wrap(ErrInvalidParam, "base")
 	}
-	if currency == "" {
-		return nil, errors.Wrap(ErrInvalidParam, "currency")
+	if len(currencies) == 0 {
+		return nil, errors.Wrap(ErrInvalidParam, "currencies")
 	}
 
 	req, err := r.httpSvc.NewRequest(
@@ -152,9 +152,9 @@ func (r *Repository) SpecificRates(base, currency string) (*rates.BasedRates, er
 			r.baseURL, "latest",
 		}, "/"),
 		nil,
-		map[string]string{
+		map[string]interface{}{
 			"base":    base,
-			"symbols": currency,
+			"symbols": currencies,
 		},
 	)
 	if err != nil {

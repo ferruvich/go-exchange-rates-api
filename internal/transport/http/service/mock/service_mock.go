@@ -88,7 +88,7 @@ func (mr *MockServicerMockRecorder) Do(req interface{}) *gomock.Call {
 }
 
 // NewRequest mocks base method
-func (m *MockServicer) NewRequest(method, url string, body io.ReadCloser, qp map[string]string) (*http.Request, error) {
+func (m *MockServicer) NewRequest(method, url string, body io.ReadCloser, qp map[string]interface{}) (*http.Request, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "NewRequest", method, url, body, qp)
 	ret0, _ := ret[0].(*http.Request)

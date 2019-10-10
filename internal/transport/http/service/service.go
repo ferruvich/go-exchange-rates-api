@@ -3,6 +3,13 @@ package service
 import (
 	"io"
 	"net/http"
+
+	"github.com/pkg/errors"
+)
+
+var (
+	// ErrInvalidParam is used when an invalid param is passed as input
+	ErrInvalidParam = errors.New("invalid_parameter")
 )
 
 //go:generate mockgen -source=service.go -destination=mock/service_mock.go -package=service_mock -self_package=. Doer,Servicer
@@ -16,7 +23,7 @@ type Doer interface {
 // Servicer is the HTTP service interface
 type Servicer interface {
 	Doer
-	NewRequest(method, url string, body io.ReadCloser, qp map[string]string) (*http.Request, error)
+	NewRequest(method, url string, body io.ReadCloser, qp map[string]interface{}) (*http.Request, error)
 }
 
 // Service is the Servicer implementation
@@ -26,7 +33,7 @@ type Service struct {
 
 // NewRequest craft a new http.Request, given all its parameters
 func (s *Service) NewRequest(
-	method, url string, body io.ReadCloser, qp map[string]string,
+	method, url string, body io.ReadCloser, qp map[string]interface{},
 ) (*http.Request, error) {
 	req, err := http.NewRequest(method, url, body)
 	if err != nil {
@@ -35,7 +42,16 @@ func (s *Service) NewRequest(
 
 	q := req.URL.Query()
 	for k, v := range qp {
-		q.Add(k, v)
+		switch t := v.(type) {
+		case string:
+			q.Add(k, t)
+		case []string:
+			for _, el := range t {
+				q.Add(k, el)
+			}
+		default:
+			return nil, errors.Wrapf(ErrInvalidParam, "qp: %s", k)
+		}
 	}
 	req.URL.RawQuery = q.Encode()
 
