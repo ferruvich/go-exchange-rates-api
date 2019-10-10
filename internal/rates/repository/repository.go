@@ -1,12 +1,12 @@
-package service
+package repository
 
 import (
 	"encoding/json"
 	"io/ioutil"
 	"strings"
 
-	internal_http "github.com/ferruvich/go-exchange-rates-api/internal/transport/http/service"
 	"github.com/ferruvich/go-exchange-rates-api/internal/rates"
+	internal_http "github.com/ferruvich/go-exchange-rates-api/internal/transport/http/service"
 	"github.com/pkg/errors"
 )
 
@@ -22,30 +22,30 @@ var (
 	ErrResponse = errors.New("response_error")
 )
 
-// Servicer is the service interface
-type Servicer interface {
+// Repositorer is the repo interface
+type Repositorer interface {
 	DailyRates(base string) (*rates.BasedRates, error)
 	HistoricalRates(base string) (*rates.HistoricalRates, error)
 	SpecificRates(base, conversion string) (*rates.BasedRates, error)
 }
 
-// Service is the Servicer implementation
-type Service struct {
+// Repository is the Repositorer implementation
+type Repository struct {
 	httpSvc internal_http.Servicer
 	baseURL string
 }
 
 // DailyRates returns the daily exchange rates
 // for the given 'base' currency
-func (s *Service) DailyRates(base string) (*rates.BasedRates, error) {
+func (r *Repository) DailyRates(base string) (*rates.BasedRates, error) {
 	if base == "" {
 		return nil, errors.Wrap(ErrInvalidParam, "base")
 	}
 
-	req, err := s.httpSvc.NewRequest(
+	req, err := r.httpSvc.NewRequest(
 		"GET",
 		strings.Join([]string{
-			s.baseURL, "latest",
+			r.baseURL, "latest",
 		}, "/"),
 		nil,
 		map[string]string{
@@ -56,11 +56,10 @@ func (s *Service) DailyRates(base string) (*rates.BasedRates, error) {
 		return nil, errors.Wrap(ErrRequest, err.Error())
 	}
 
-	resp, err := s.httpSvc.Do(req)
+	resp, err := r.httpSvc.Do(req)
 	if err != nil {
 		return nil, errors.Wrap(ErrRequest, err.Error())
 	}
-
 	defer resp.Body.Close()
 
 	respb, err := ioutil.ReadAll(resp.Body)
@@ -78,8 +77,8 @@ func (s *Service) DailyRates(base string) (*rates.BasedRates, error) {
 }
 
 // New initializes a new rates service
-func New(c internal_http.Servicer) *Service {
-	return &Service{
+func New(c internal_http.Servicer) *Repository {
+	return &Repository{
 		httpSvc: c,
 		baseURL: "https://api.exchangeratesapi.io",
 	}

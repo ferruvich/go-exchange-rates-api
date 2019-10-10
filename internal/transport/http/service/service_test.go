@@ -13,7 +13,7 @@ import (
 )
 
 func TestService_NewRequest(t *testing.T) {
-	t.Run("should return error due to NewRequest error", func(t *testing.T) {
+	t.Run("should return error due to problem on NewRequest", func(t *testing.T) {
 		s := service.New(nil)
 
 		res, err := s.NewRequest("bad method", "", nil, nil)
@@ -33,7 +33,7 @@ func TestService_NewRequest(t *testing.T) {
 }
 
 func TestService_Do(t *testing.T) {
-	t.Run("should return error due to error on Doer", func(t *testing.T) {
+	t.Run("should return error due to problem on Doer", func(t *testing.T) {
 		controller := gomock.NewController(t)
 		defer controller.Finish()
 
