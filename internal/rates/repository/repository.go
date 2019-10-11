@@ -181,7 +181,7 @@ func (r *Repository) SpecificRates(base string, currencies []string) (*rates.Bas
 	return res, nil
 }
 
-// New initializes a new rates service
+// New initializes a new rates repo
 func New(c internal_http.Servicer) *Repository {
 	return &Repository{
 		httpSvc: c,
