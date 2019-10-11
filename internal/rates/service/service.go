@@ -9,12 +9,15 @@ import (
 
 const (
 	gbp = "GBP"
+	eur = "EUR"
 	usd = "USD"
 )
 
 var (
 	// ErrRepo is used when there's an error on Repository
 	ErrRepo = errors.New("repo_error")
+	// ErrInvalidParam is used when an invalid parameter is passed
+	ErrInvalidParam = errors.New("invalid_parameter")
 )
 
 // Servicer is the rates service interface
@@ -47,8 +50,15 @@ func (s *Service) CurrentGBPUSDRates() ([]*rates.BasedRates, error) {
 
 // CurrentEURRate returns the 'currency' value in euros
 func (s *Service) CurrentEURRate(currency string) (*rates.BasedRates, error) {
-	// TODO
-	return nil, nil
+	rates, err := s.repo.SpecificRates(currency, []string{eur})
+	if err != nil {
+		if repository.ErrInvalidParam == errors.Cause(err) {
+			return nil, errors.Wrap(ErrInvalidParam, err.Error())
+		}
+		return nil, errors.Wrap(ErrRepo, err.Error())
+	}
+
+	return rates, nil
 }
 
 // RecommendEURExchange makes a naive recommendation as to whether
