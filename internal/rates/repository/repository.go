@@ -27,6 +27,8 @@ var (
 	ErrResponse = errors.New("response_error")
 )
 
+//go:generate mockgen -source=repository.go -destination=mock/repository_mock.go -package=repository_mock -self_package=. Repositorer
+
 // Repositorer is the repo interface
 type Repositorer interface {
 	CurrentRates(base string) (*rates.BasedRates, error)

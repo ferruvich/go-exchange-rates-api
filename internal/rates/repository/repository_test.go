@@ -18,6 +18,9 @@ import (
 
 const (
 	reqTimeoutSecs = 5
+	method         = "GET"
+	url            = "someURL"
+	base           = "EUR"
 )
 
 type errorReader struct{}
@@ -27,12 +30,6 @@ func (r *errorReader) Read(p []byte) (int, error) {
 }
 
 func TestRepository_CurrentRates(t *testing.T) {
-	const (
-		method = "GET"
-		url    = "someURL"
-		base   = "EUR"
-	)
-
 	t.Run("should return error due to invalid base param", func(t *testing.T) {
 		repo := repository.New(nil)
 		res, err := repo.CurrentRates("")
@@ -136,13 +133,8 @@ func TestRepository_CurrentRates(t *testing.T) {
 }
 
 func TestRepository_HistoricalRates(t *testing.T) {
-	const (
-		method    = "GET"
-		url       = "someURL"
-		base      = "EUR"
-		startDate = "2000-01-01"
-		endDate   = "2000-02-02"
-	)
+	startDate := "2000-01-01"
+	endDate := "2000-02-02"
 
 	t.Run("should return error due to invalid base param", func(t *testing.T) {
 		repo := repository.New(nil)
@@ -288,11 +280,6 @@ func TestRepository_HistoricalRates(t *testing.T) {
 }
 
 func TestRepository_SpecificRates(t *testing.T) {
-	const (
-		method = "GET"
-		url    = "someURL"
-		base   = "EUR"
-	)
 	currencies := []string{"GBP"}
 
 	t.Run("should return error due to invalid base param", func(t *testing.T) {

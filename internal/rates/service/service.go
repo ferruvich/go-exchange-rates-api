@@ -1,8 +1,20 @@
 package service
 
 import (
+	"github.com/pkg/errors"
+
 	"github.com/ferruvich/go-exchange-rates-api/internal/rates"
 	"github.com/ferruvich/go-exchange-rates-api/internal/rates/repository"
+)
+
+const (
+	gbp = "GBP"
+	usd = "USD"
+)
+
+var (
+	// ErrRepo is used when there's an error on Repository
+	ErrRepo = errors.New("repo_error")
 )
 
 // Servicer is the rates service interface
@@ -20,8 +32,17 @@ type Service struct {
 // CurrentGBPUSDRates returns the latest exchange rates for the base
 // currencies of GBP and USD
 func (s *Service) CurrentGBPUSDRates() ([]*rates.BasedRates, error) {
-	// TODO
-	return nil, nil
+	gbpRates, err := s.repo.CurrentRates(gbp)
+	if err != nil {
+		return nil, errors.Wrap(ErrRepo, err.Error())
+	}
+
+	usdRates, err := s.repo.CurrentRates(usd)
+	if err != nil {
+		return nil, errors.Wrap(ErrRepo, err.Error())
+	}
+
+	return []*rates.BasedRates{gbpRates, usdRates}, nil
 }
 
 // CurrentEURRate returns the 'currency' value in euros
