@@ -32,8 +32,8 @@ var (
 // Repositorer is the repo interface
 type Repositorer interface {
 	CurrentRates(base string) (*rates.BasedRates, error)
-	HistoricalRates(base, start, end string) (*rates.HistoricalRates, error)
-	SpecificRates(base string, currencies []string) (*rates.BasedRates, error)
+	CurrentSpecificRates(base string, currencies []string) (*rates.BasedRates, error)
+	HistoricalSpecificRates(base, start, end string, currencies []string) (*rates.HistoricalRates, error)
 }
 
 // Repository is the Repositorer implementation
@@ -89,58 +89,9 @@ func (r *Repository) CurrentRates(base string) (*rates.BasedRates, error) {
 	return res, nil
 }
 
-// HistoricalRates returns the historical exchange rates
-// for the given 'base' currency, starting from 'start' date and ending to 'end' date
-func (r *Repository) HistoricalRates(base, start, end string) (*rates.HistoricalRates, error) {
-	if base == "" {
-		return nil, errors.Wrap(ErrInvalidParam, "base")
-	}
-	if start == "" && !checkDate(start) {
-		return nil, errors.Wrap(ErrInvalidParam, "start")
-	}
-	if end == "" && !checkDate(end) {
-		return nil, errors.Wrap(ErrInvalidParam, "end")
-	}
-
-	req, err := r.httpSvc.NewRequest(
-		"GET",
-		strings.Join([]string{
-			r.baseURL, "history",
-		}, "/"),
-		nil,
-		map[string]interface{}{
-			"base":     base,
-			"start_at": start,
-			"end_at":   end,
-		},
-	)
-	if err != nil {
-		return nil, errors.Wrap(ErrRequest, err.Error())
-	}
-
-	resp, err := r.httpSvc.Do(req)
-	if err != nil {
-		return nil, errors.Wrap(ErrRequest, err.Error())
-	}
-	defer resp.Body.Close()
-
-	respb, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return nil, errors.Wrap(ErrResponse, err.Error())
-	}
-
-	res := new(rates.HistoricalRates)
-	err = json.Unmarshal(respb, res)
-	if err != nil {
-		return nil, errors.Wrap(ErrResponse, err.Error())
-	}
-
-	return res, nil
-}
-
-// SpecificRates returns the current exchange rate
-// for the given 'base' currency and the specific 'currency'
-func (r *Repository) SpecificRates(base string, currencies []string) (*rates.BasedRates, error) {
+// CurrentSpecificRates returns the current exchange rate
+// for the given 'base' currency and the specific 'currencies'
+func (r *Repository) CurrentSpecificRates(base string, currencies []string) (*rates.BasedRates, error) {
 	if base == "" {
 		return nil, errors.Wrap(ErrInvalidParam, "base")
 	}
@@ -175,6 +126,60 @@ func (r *Repository) SpecificRates(base string, currencies []string) (*rates.Bas
 	}
 
 	res := new(rates.BasedRates)
+	err = json.Unmarshal(respb, res)
+	if err != nil {
+		return nil, errors.Wrap(ErrResponse, err.Error())
+	}
+
+	return res, nil
+}
+
+// HistoricalSpecificRates returns the historical exchange rates
+// for the given 'base' currency and the specific 'currencies',
+// starting from 'start' date and ending to 'end' date
+func (r *Repository) HistoricalSpecificRates(base, start, end string, currencies []string) (*rates.HistoricalRates, error) {
+	if base == "" {
+		return nil, errors.Wrap(ErrInvalidParam, "base")
+	}
+	if start == "" && !checkDate(start) {
+		return nil, errors.Wrap(ErrInvalidParam, "start")
+	}
+	if end == "" && !checkDate(end) {
+		return nil, errors.Wrap(ErrInvalidParam, "end")
+	}
+	if len(currencies) == 0 {
+		return nil, errors.Wrap(ErrInvalidParam, "end")
+	}
+
+	req, err := r.httpSvc.NewRequest(
+		"GET",
+		strings.Join([]string{
+			r.baseURL, "history",
+		}, "/"),
+		nil,
+		map[string]interface{}{
+			"base":     base,
+			"start_at": start,
+			"end_at":   end,
+			"symbols":  currencies,
+		},
+	)
+	if err != nil {
+		return nil, errors.Wrap(ErrRequest, err.Error())
+	}
+
+	resp, err := r.httpSvc.Do(req)
+	if err != nil {
+		return nil, errors.Wrap(ErrRequest, err.Error())
+	}
+	defer resp.Body.Close()
+
+	respb, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, errors.Wrap(ErrResponse, err.Error())
+	}
+
+	res := new(rates.HistoricalRates)
 	err = json.Unmarshal(respb, res)
 	if err != nil {
 		return nil, errors.Wrap(ErrResponse, err.Error())

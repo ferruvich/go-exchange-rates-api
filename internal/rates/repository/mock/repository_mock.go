@@ -48,32 +48,32 @@ func (mr *MockRepositorerMockRecorder) CurrentRates(base interface{}) *gomock.Ca
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CurrentRates", reflect.TypeOf((*MockRepositorer)(nil).CurrentRates), base)
 }
 
-// HistoricalRates mocks base method
-func (m *MockRepositorer) HistoricalRates(base, start, end string) (*rates.HistoricalRates, error) {
+// CurrentSpecificRates mocks base method
+func (m *MockRepositorer) CurrentSpecificRates(base string, currencies []string) (*rates.BasedRates, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "HistoricalRates", base, start, end)
-	ret0, _ := ret[0].(*rates.HistoricalRates)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// HistoricalRates indicates an expected call of HistoricalRates
-func (mr *MockRepositorerMockRecorder) HistoricalRates(base, start, end interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HistoricalRates", reflect.TypeOf((*MockRepositorer)(nil).HistoricalRates), base, start, end)
-}
-
-// SpecificRates mocks base method
-func (m *MockRepositorer) SpecificRates(base string, currencies []string) (*rates.BasedRates, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "SpecificRates", base, currencies)
+	ret := m.ctrl.Call(m, "CurrentSpecificRates", base, currencies)
 	ret0, _ := ret[0].(*rates.BasedRates)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// SpecificRates indicates an expected call of SpecificRates
-func (mr *MockRepositorerMockRecorder) SpecificRates(base, currencies interface{}) *gomock.Call {
+// CurrentSpecificRates indicates an expected call of CurrentSpecificRates
+func (mr *MockRepositorerMockRecorder) CurrentSpecificRates(base, currencies interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SpecificRates", reflect.TypeOf((*MockRepositorer)(nil).SpecificRates), base, currencies)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CurrentSpecificRates", reflect.TypeOf((*MockRepositorer)(nil).CurrentSpecificRates), base, currencies)
+}
+
+// HistoricalSpecificRates mocks base method
+func (m *MockRepositorer) HistoricalSpecificRates(base, start, end string, currencies []string) (*rates.HistoricalRates, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "HistoricalSpecificRates", base, start, end, currencies)
+	ret0, _ := ret[0].(*rates.HistoricalRates)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// HistoricalSpecificRates indicates an expected call of HistoricalSpecificRates
+func (mr *MockRepositorerMockRecorder) HistoricalSpecificRates(base, start, end, currencies interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HistoricalSpecificRates", reflect.TypeOf((*MockRepositorer)(nil).HistoricalSpecificRates), base, start, end, currencies)
 }

@@ -66,12 +66,12 @@ func TestService_CurrentGBPUSDRates(t *testing.T) {
 }
 
 func TestService_CurrentEURRate(t *testing.T) {
-	t.Run("should return error due to problem on CurrentRates", func(t *testing.T) {
+	t.Run("should return error due to invalid param passed to SpecificRates", func(t *testing.T) {
 		controller := gomock.NewController(t)
 		defer controller.Finish()
 
 		mockRepo := repository_mock.NewMockRepositorer(controller)
-		mockRepo.EXPECT().SpecificRates(
+		mockRepo.EXPECT().CurrentSpecificRates(
 			"", []string{eur},
 		).Return(nil, errors.Wrap(repository.ErrInvalidParam, "error"))
 
@@ -82,12 +82,12 @@ func TestService_CurrentEURRate(t *testing.T) {
 		assert.Equal(t, service.ErrInvalidParam, errors.Cause(err))
 	})
 
-	t.Run("should return error due to problem on CurrentRates", func(t *testing.T) {
+	t.Run("should return error due to problem on SpecificRates", func(t *testing.T) {
 		controller := gomock.NewController(t)
 		defer controller.Finish()
 
 		mockRepo := repository_mock.NewMockRepositorer(controller)
-		mockRepo.EXPECT().SpecificRates(
+		mockRepo.EXPECT().CurrentSpecificRates(
 			gbp, []string{eur},
 		).Return(nil, errors.New("error"))
 
@@ -103,7 +103,7 @@ func TestService_CurrentEURRate(t *testing.T) {
 		defer controller.Finish()
 
 		mockRepo := repository_mock.NewMockRepositorer(controller)
-		mockRepo.EXPECT().SpecificRates(
+		mockRepo.EXPECT().CurrentSpecificRates(
 			gbp, []string{eur},
 		).Return(new(rates.BasedRates), nil)
 
