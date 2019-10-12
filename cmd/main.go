@@ -1,7 +1,6 @@
 package main
 
 import (
-	"flag"
 	gohttp "net/http"
 
 	"github.com/ferruvich/go-exchange-rates-api/internal/transport/http"
@@ -15,9 +14,13 @@ const (
 	defaultAddr = ":8000"
 )
 
+// @title Exchange rates API
+// @version 1.0
+// @description API to retrieve exchange rates, and make recommendations
+
+// @host localhost:8000
+// @BasePath /
 func main() {
-	addr := flag.String("addr", defaultAddr, "address to run server")
-	flag.Parse()
 
 	ratesSvc := rates_service.New(
 		rates_repo.New(
@@ -25,6 +28,6 @@ func main() {
 		),
 	)
 
-	router := http.Routes(ratesSvc)
-	router.Run(*addr)
+	router := http.Routes(defaultAddr, ratesSvc)
+	router.Run(defaultAddr)
 }

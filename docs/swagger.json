@@ -1,0 +1,151 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "API to retrieve exchange rates, and make recommendations",
+        "title": "Exchange rates API",
+        "contact": {},
+        "license": {},
+        "version": "1.0"
+    },
+    "host": "localhost:8000",
+    "basePath": "/",
+    "paths": {
+        "/rates": {
+            "get": {
+                "description": "returns GBP and USD exchange rates",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Get Rates",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/rates.BasedRates"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/http.ErrBody"
+                        }
+                    }
+                }
+            }
+        },
+        "/recommendation/{currency}": {
+            "get": {
+                "description": "returns a recommendation as to whether this is a good time to exchange money or not",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Get Exchange Recommendation",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Currency",
+                        "name": "currency",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/http.RecommendBody"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/http.ErrBody"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/http.ErrBody"
+                        }
+                    }
+                }
+            }
+        },
+        "/value/{currency}": {
+            "get": {
+                "description": "returns the EUR value for the given currency",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Get EUR Values",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Currency",
+                        "name": "currency",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/rates.BasedRates"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/http.ErrBody"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/http.ErrBody"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "http.ErrBody": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                }
+            }
+        },
+        "http.RecommendBody": {
+            "type": "object",
+            "properties": {
+                "msg": {
+                    "type": "string"
+                }
+            }
+        },
+        "rates.BasedRates": {
+            "type": "object",
+            "properties": {
+                "base": {
+                    "type": "string"
+                },
+                "date": {
+                    "type": "string"
+                },
+                "rates": {
+                    "type": "object"
+                }
+            }
+        }
+    }
+}

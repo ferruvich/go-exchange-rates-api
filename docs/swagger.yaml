@@ -1,0 +1,100 @@
+basePath: /
+definitions:
+  http.ErrBody:
+    properties:
+      error:
+        type: string
+    type: object
+  http.RecommendBody:
+    properties:
+      msg:
+        type: string
+    type: object
+  rates.BasedRates:
+    properties:
+      base:
+        type: string
+      date:
+        type: string
+      rates:
+        type: object
+    type: object
+host: localhost:8000
+info:
+  contact: {}
+  description: API to retrieve exchange rates, and make recommendations
+  license: {}
+  title: Exchange rates API
+  version: "1.0"
+paths:
+  /rates:
+    get:
+      description: returns GBP and USD exchange rates
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/rates.BasedRates'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.ErrBody'
+      summary: Get Rates
+  /recommendation/{currency}:
+    get:
+      description: returns a recommendation as to whether this is a good time to exchange
+        money or not
+      parameters:
+      - description: Currency
+        in: path
+        name: currency
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.RecommendBody'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.ErrBody'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.ErrBody'
+      summary: Get Exchange Recommendation
+  /value/{currency}:
+    get:
+      description: returns the EUR value for the given currency
+      parameters:
+      - description: Currency
+        in: path
+        name: currency
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/rates.BasedRates'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.ErrBody'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.ErrBody'
+      summary: Get EUR Values
+swagger: "2.0"

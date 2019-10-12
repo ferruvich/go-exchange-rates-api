@@ -24,7 +24,7 @@ func TestGetRatesHandler(t *testing.T) {
 		mockSvc := service_mock.NewMockServicer(controller)
 		mockSvc.EXPECT().CurrentGBPUSDRates().Return(nil, errors.New("error"))
 
-		router := http.Routes(mockSvc)
+		router := http.Routes("", mockSvc)
 
 		r := httptest.NewRequest(
 			gohttp.MethodGet, "/rates", nil,
@@ -44,7 +44,7 @@ func TestGetRatesHandler(t *testing.T) {
 			[]*rates.BasedRates{}, nil,
 		)
 
-		router := http.Routes(mockSvc)
+		router := http.Routes("", mockSvc)
 
 		r := httptest.NewRequest(
 			gohttp.MethodGet, "/rates", nil,
@@ -68,7 +68,7 @@ func TestGetEURValue(t *testing.T) {
 			nil, errors.Wrap(service.ErrInvalidParam, "error"),
 		)
 
-		router := http.Routes(mockSvc)
+		router := http.Routes("", mockSvc)
 
 		route := strings.Join([]string{
 			"/value", currency,
@@ -89,7 +89,7 @@ func TestGetEURValue(t *testing.T) {
 		mockSvc := service_mock.NewMockServicer(controller)
 		mockSvc.EXPECT().CurrentEURRate(currency).Return(nil, errors.New("error"))
 
-		router := http.Routes(mockSvc)
+		router := http.Routes("", mockSvc)
 
 		route := strings.Join([]string{
 			"/value", currency,
@@ -112,7 +112,7 @@ func TestGetEURValue(t *testing.T) {
 			new(rates.BasedRates), nil,
 		)
 
-		router := http.Routes(mockSvc)
+		router := http.Routes("", mockSvc)
 
 		route := strings.Join([]string{
 			"/value", currency,
@@ -139,7 +139,7 @@ func TestRecommend(t *testing.T) {
 			false, errors.Wrap(service.ErrInvalidParam, "error"),
 		)
 
-		router := http.Routes(mockSvc)
+		router := http.Routes("", mockSvc)
 
 		route := strings.Join([]string{
 			"/recommendation", currency,
@@ -162,7 +162,7 @@ func TestRecommend(t *testing.T) {
 			false, errors.Wrap(service.ErrNotEnoughData, "error"),
 		)
 
-		router := http.Routes(mockSvc)
+		router := http.Routes("", mockSvc)
 
 		route := strings.Join([]string{
 			"/recommendation", currency,
@@ -185,7 +185,7 @@ func TestRecommend(t *testing.T) {
 			false, errors.New("error"),
 		)
 
-		router := http.Routes(mockSvc)
+		router := http.Routes("", mockSvc)
 
 		route := strings.Join([]string{
 			"/recommendation", currency,
@@ -208,7 +208,7 @@ func TestRecommend(t *testing.T) {
 			true, nil,
 		)
 
-		router := http.Routes(mockSvc)
+		router := http.Routes("", mockSvc)
 
 		route := strings.Join([]string{
 			"/recommendation", currency,
@@ -231,7 +231,7 @@ func TestRecommend(t *testing.T) {
 			false, nil,
 		)
 
-		router := http.Routes(mockSvc)
+		router := http.Routes("", mockSvc)
 
 		route := strings.Join([]string{
 			"/recommendation", currency,

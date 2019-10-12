@@ -10,7 +10,7 @@ import (
 
 func TestRoutes(t *testing.T) {
 	t.Run("should return routes", func(t *testing.T) {
-		r := http.Routes(nil)
+		r := http.Routes("", nil)
 
 		assert.NotNil(t, r)
 	})
