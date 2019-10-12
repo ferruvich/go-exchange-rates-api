@@ -1,0 +1,80 @@
+{
+	"info": {
+		"_postman_id": "3878f6ea-b220-407f-8278-607d48c3db17",
+		"name": "Exchange-Rates-API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Current Rates",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8000/rates",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"rates"
+					]
+				},
+				"description": "Get current GBP and USD rates"
+			},
+			"response": []
+		},
+		{
+			"name": "Current EUR value",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8000/value/:currency",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"value",
+						":currency"
+					],
+					"variable": [
+						{
+							"key": "currency",
+							"value": "GBP"
+						}
+					]
+				},
+				"description": "returns current eur value of the currency"
+			},
+			"response": []
+		},
+		{
+			"name": "Recommend EUR exchange",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8000/recommendation/:currency",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"recommendation",
+						":currency"
+					],
+					"variable": [
+						{
+							"key": "currency",
+							"value": "ZAR"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
