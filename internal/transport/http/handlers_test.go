@@ -126,3 +126,122 @@ func TestGetEURValue(t *testing.T) {
 		assert.Equal(t, gohttp.StatusOK, w.Code)
 	})
 }
+
+func TestRecommend(t *testing.T) {
+	currency := "GBP"
+
+	t.Run("should return 400 BAD REQUEST due to bad currency", func(t *testing.T) {
+		controller := gomock.NewController(t)
+		defer controller.Finish()
+
+		mockSvc := service_mock.NewMockServicer(controller)
+		mockSvc.EXPECT().RecommendEURExchange(currency).Return(
+			false, errors.Wrap(service.ErrInvalidParam, "error"),
+		)
+
+		router := http.Routes(mockSvc)
+
+		route := strings.Join([]string{
+			"/recommendation", currency,
+		}, "/")
+		r := httptest.NewRequest(
+			gohttp.MethodGet, route, nil,
+		)
+		w := httptest.NewRecorder()
+
+		router.ServeHTTP(w, r)
+		assert.Equal(t, gohttp.StatusBadRequest, w.Code)
+	})
+
+	t.Run("should return 500 INTERNAL SERVER ERROR due to not enough data", func(t *testing.T) {
+		controller := gomock.NewController(t)
+		defer controller.Finish()
+
+		mockSvc := service_mock.NewMockServicer(controller)
+		mockSvc.EXPECT().RecommendEURExchange(currency).Return(
+			false, errors.Wrap(service.ErrNotEnoughData, "error"),
+		)
+
+		router := http.Routes(mockSvc)
+
+		route := strings.Join([]string{
+			"/recommendation", currency,
+		}, "/")
+		r := httptest.NewRequest(
+			gohttp.MethodGet, route, nil,
+		)
+		w := httptest.NewRecorder()
+
+		router.ServeHTTP(w, r)
+		assert.Equal(t, gohttp.StatusInternalServerError, w.Code)
+	})
+
+	t.Run("should return 500 INTERNAL SERVER ERROR due to service error", func(t *testing.T) {
+		controller := gomock.NewController(t)
+		defer controller.Finish()
+
+		mockSvc := service_mock.NewMockServicer(controller)
+		mockSvc.EXPECT().RecommendEURExchange(currency).Return(
+			false, errors.New("error"),
+		)
+
+		router := http.Routes(mockSvc)
+
+		route := strings.Join([]string{
+			"/recommendation", currency,
+		}, "/")
+		r := httptest.NewRequest(
+			gohttp.MethodGet, route, nil,
+		)
+		w := httptest.NewRecorder()
+
+		router.ServeHTTP(w, r)
+		assert.Equal(t, gohttp.StatusInternalServerError, w.Code)
+	})
+
+	t.Run("should return 200 OK (with advise to exchange money)", func(t *testing.T) {
+		controller := gomock.NewController(t)
+		defer controller.Finish()
+
+		mockSvc := service_mock.NewMockServicer(controller)
+		mockSvc.EXPECT().RecommendEURExchange(currency).Return(
+			true, nil,
+		)
+
+		router := http.Routes(mockSvc)
+
+		route := strings.Join([]string{
+			"/recommendation", currency,
+		}, "/")
+		r := httptest.NewRequest(
+			gohttp.MethodGet, route, nil,
+		)
+		w := httptest.NewRecorder()
+
+		router.ServeHTTP(w, r)
+		assert.Equal(t, gohttp.StatusOK, w.Code)
+	})
+
+	t.Run("should return 200 OK (with advise to not exchange money)", func(t *testing.T) {
+		controller := gomock.NewController(t)
+		defer controller.Finish()
+
+		mockSvc := service_mock.NewMockServicer(controller)
+		mockSvc.EXPECT().RecommendEURExchange(currency).Return(
+			false, nil,
+		)
+
+		router := http.Routes(mockSvc)
+
+		route := strings.Join([]string{
+			"/recommendation", currency,
+		}, "/")
+		r := httptest.NewRequest(
+			gohttp.MethodGet, route, nil,
+		)
+		w := httptest.NewRecorder()
+
+		router.ServeHTTP(w, r)
+		assert.Equal(t, gohttp.StatusOK, w.Code)
+	})
+}
