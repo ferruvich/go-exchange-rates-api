@@ -28,6 +28,8 @@ var (
 	ErrNotEnoughData = errors.New("not_enough_data")
 )
 
+//go:generate mockgen -source=service.go -destination=mock/service_mock.go -package=service_mock -self_package=. Servicer
+
 // Servicer is the rates service interface
 type Servicer interface {
 	CurrentGBPUSDRates() ([]*rates.BasedRates, error)
