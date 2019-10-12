@@ -15,9 +15,7 @@ func Routes(
 	router := gin.Default()
 
 	router.GET("/rates", GetRatesHandler(s))
-	router.GET("/eur-rates/:currency", func(c *gin.Context) {
-		c.JSON(http.StatusNotImplemented, gin.H{})
-	})
+	router.GET("/value/:currency", GetEURValue(s))
 	router.GET("/recommend/:currency", func(c *gin.Context) {
 		c.JSON(http.StatusNotImplemented, gin.H{})
 	})

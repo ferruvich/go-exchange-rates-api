@@ -51,7 +51,7 @@ func checkDate(date string) bool {
 // CurrentRates returns the current exchange rates
 // for the given 'base' currency
 func (r *Repository) CurrentRates(base string) (*rates.BasedRates, error) {
-	if base == "" {
+	if base == "" || len(base) != 3 {
 		return nil, errors.Wrap(ErrInvalidParam, "base")
 	}
 
@@ -92,7 +92,7 @@ func (r *Repository) CurrentRates(base string) (*rates.BasedRates, error) {
 // CurrentSpecificRates returns the current exchange rate
 // for the given 'base' currency and the specific 'currencies'
 func (r *Repository) CurrentSpecificRates(base string, currencies []string) (*rates.BasedRates, error) {
-	if base == "" {
+	if base == "" || len(base) != 3 {
 		return nil, errors.Wrap(ErrInvalidParam, "base")
 	}
 	if len(currencies) == 0 {
@@ -138,7 +138,7 @@ func (r *Repository) CurrentSpecificRates(base string, currencies []string) (*ra
 // for the given 'base' currency and the specific 'currencies',
 // starting from 'start' date and ending to 'end' date
 func (r *Repository) HistoricalSpecificRates(base, start, end string, currencies []string) (*rates.HistoricalRates, error) {
-	if base == "" {
+	if base == "" || len(base) != 3 {
 		return nil, errors.Wrap(ErrInvalidParam, "base")
 	}
 	if start == "" && !checkDate(start) {
