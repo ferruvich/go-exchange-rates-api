@@ -2,7 +2,7 @@ package rates
 
 // BasedRates contains the rates of a specific base currency
 type BasedRates struct {
-	Rates map[string]float32 `json:"rates"`
+	Rates map[string]float64 `json:"rates"`
 	Base  string             `json:"base"`
 	Date  string             `json:"date"`
 }
@@ -10,8 +10,8 @@ type BasedRates struct {
 // HistoricalRates contains the historical rates of
 // a specific base currency
 type HistoricalRates struct {
-	Rates   map[string]map[string]interface{} `json:"rates"`
-	Base    string                            `json:"base"`
-	StartAt string                            `json:"start_at"`
-	EndAt   string                            `json:"end_at"`
+	Rates   map[string]map[string]float64 `json:"rates"`
+	Base    string                        `json:"base"`
+	StartAt string                        `json:"start_at"`
+	EndAt   string                        `json:"end_at"`
 }

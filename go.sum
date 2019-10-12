@@ -1,3 +1,5 @@
+github.com/DzananGanic/numericalgo v0.0.0-20170804125527-2b389385baf0 h1:r6uFFLCEAjchb/oIwOojAsW4jchQxVBgQ33iOcMwwo8=
+github.com/DzananGanic/numericalgo v0.0.0-20170804125527-2b389385baf0/go.mod h1:uIo7VpFvBkDQoCyKqUL/mTNjpOlv1KdWaJyCsBSpCe4=
 github.com/davecgh/go-spew v1.1.0 h1:ZDRjVQ15GmhC3fiQ8ni8+OwkZQO4DARzQgrnXU1Liz8=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/golang/mock v1.3.1 h1:qGJ6qTW+x6xX/my+8YUVl4WNpX9B7+/l2tRsHGZ7f2s=

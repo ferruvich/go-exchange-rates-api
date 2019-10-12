@@ -115,7 +115,117 @@ func TestService_CurrentEURRate(t *testing.T) {
 }
 
 func TestService_RecommendEURExchange(t *testing.T) {
-	// TODO
+	t.Run("should return error due to invalid param passed to HistoricalSpecificRates", func(t *testing.T) {
+		controller := gomock.NewController(t)
+		defer controller.Finish()
+
+		mockRepo := repository_mock.NewMockRepositorer(controller)
+		mockRepo.EXPECT().HistoricalSpecificRates(
+			gbp, gomock.Any(), gomock.Any(), []string{eur},
+		).Return(nil, errors.Wrap(repository.ErrInvalidParam, "error"))
+
+		s := service.New(mockRepo)
+		res, err := s.RecommendEURExchange(gbp)
+		assert.Error(t, err)
+		assert.False(t, res)
+		assert.Equal(t, service.ErrInvalidParam, errors.Cause(err))
+	})
+
+	t.Run("should return error due to problem on HistoricalSpecificRates", func(t *testing.T) {
+		controller := gomock.NewController(t)
+		defer controller.Finish()
+
+		mockRepo := repository_mock.NewMockRepositorer(controller)
+		mockRepo.EXPECT().HistoricalSpecificRates(
+			gbp, gomock.Any(), gomock.Any(), []string{eur},
+		).Return(nil, errors.New("error"))
+
+		s := service.New(mockRepo)
+		res, err := s.RecommendEURExchange(gbp)
+		assert.Error(t, err)
+		assert.False(t, res)
+		assert.Equal(t, service.ErrRepo, errors.Cause(err))
+	})
+
+	t.Run("should return error due to not enough data", func(t *testing.T) {
+		controller := gomock.NewController(t)
+		defer controller.Finish()
+
+		mockRepo := repository_mock.NewMockRepositorer(controller)
+		mockRepo.EXPECT().HistoricalSpecificRates(
+			gbp, gomock.Any(), gomock.Any(), []string{eur},
+		).Return(new(rates.HistoricalRates), nil)
+
+		s := service.New(mockRepo)
+		res, err := s.RecommendEURExchange(gbp)
+		assert.Error(t, err)
+		assert.False(t, res)
+		assert.Equal(t, service.ErrNotEnoughData, errors.Cause(err))
+	})
+
+	t.Run("should return true correctly", func(t *testing.T) {
+		controller := gomock.NewController(t)
+		defer controller.Finish()
+
+		rates := &rates.HistoricalRates{
+			Rates: map[string]map[string]float64{
+				"2019-10-09": {
+					eur: 1.1129660545,
+				},
+				"2019-10-10": {
+					eur: 1.1092008208,
+				},
+				"2019-10-08": {
+					eur: 1.1136477532,
+				},
+			},
+			StartAt: "2019-10-05",
+			Base:    gbp,
+			EndAt:   "2019-10-12",
+		}
+
+		mockRepo := repository_mock.NewMockRepositorer(controller)
+		mockRepo.EXPECT().HistoricalSpecificRates(
+			gbp, gomock.Any(), gomock.Any(), []string{eur},
+		).Return(rates, nil)
+
+		s := service.New(mockRepo)
+		res, err := s.RecommendEURExchange(gbp)
+		assert.NoError(t, err)
+		assert.True(t, res)
+	})
+
+	t.Run("should return false correctly", func(t *testing.T) {
+		controller := gomock.NewController(t)
+		defer controller.Finish()
+
+		rates := &rates.HistoricalRates{
+			Rates: map[string]map[string]float64{
+				"2019-10-09": {
+					eur: 1.1129660545,
+				},
+				"2019-10-08": {
+					eur: 1.1092008208,
+				},
+				"2019-10-10": {
+					eur: 1.1136477532,
+				},
+			},
+			StartAt: "2019-10-05",
+			Base:    gbp,
+			EndAt:   "2019-10-12",
+		}
+
+		mockRepo := repository_mock.NewMockRepositorer(controller)
+		mockRepo.EXPECT().HistoricalSpecificRates(
+			gbp, gomock.Any(), gomock.Any(), []string{eur},
+		).Return(rates, nil)
+
+		s := service.New(mockRepo)
+		res, err := s.RecommendEURExchange(gbp)
+		assert.NoError(t, err)
+		assert.False(t, res)
+	})
 }
 
 func TestNew(t *testing.T) {
