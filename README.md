@@ -47,5 +47,5 @@ When project is running, you can go to `localhost:8000/swagger/index.html` or si
 
 ### How to perform API Calls
 
-You can test API calls on Swagger documentation page, in `localhost:8000`. Otherwise, a [Postman](https://www.getpostman.com/) collection has been created in order to test them. It is available [here](https://github.com/ferruvich/go-exchange-rates-api/blob/master/docs/postman_collection.json).
+You can test API calls on Swagger documentation page, in `localhost:8000`. Otherwise, a [Postman](https://www.getpostman.com/) collection has been created in order to test them. It is available [here](https://github.com/ferruvich/go-exchange-rates-api/blob/master/api/postman_collection.json).
 To use it, download it, open Postman, click on **import** and follow the instructions.
