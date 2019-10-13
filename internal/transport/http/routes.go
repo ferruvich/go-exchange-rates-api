@@ -22,8 +22,12 @@ func Routes(
 
 	// For documentation purposes
 	url := ginSwagger.URL(strings.Join([]string{address, "/swagger/doc.json"}, "/"))
-	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, url))
 
+	// This is done in order to redirect to documentation
+	router.GET("/", func(c *gin.Context) {
+		c.Redirect(301, "/swagger/index.html")
+	})
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, url))
 	router.GET("/rates", GetRatesHandler(s))
 	router.GET("/value/:currency", GetEURValue(s))
 	router.GET("/recommendation/:currency", Recommend(s))
